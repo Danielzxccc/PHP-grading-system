@@ -1,0 +1,8 @@
+.login-background {
+  background: url('../assets/EDITED.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.login-form {
+  background: #fafad2;
+}
