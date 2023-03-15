@@ -1,3 +1,10 @@
+<?php
+// session_start();
+// if (isset($_SESSION['id'])) {
+//     header("Location: ./student/student.php");
+// }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +21,7 @@
 </head>
 
 <body>
-    <main>
+    <main class="overflow-hidden">
         <div class="row justify-content-center align-items-center vh-100 login-form">
             <div class="login-background vh-100 col d-none d-md-block">
 
@@ -22,7 +29,7 @@
             <div class="d-flex justify-content-center align-items-center flex-column col">
                 <div class="d-flex justify-content-center align-items-center flex-column mb-5">
                     <img src="./assets/school_logo.png" alt="school_logo">
-                    <h4 class="text-center text-primary fw-bold">ONLINE STUDENT ACADEMIC <br> RECORD AND GRADING SYSTEM</h4>
+                    <h4 class="text-center text-primary fw-bold ">ONLINE STUDENT ACADEMIC <br> RECORD AND GRADING SYSTEM</h4>
                 </div>
                 <!-- login form -->
                 <div>
@@ -32,16 +39,19 @@
                                 <label for="username" class="form-label">Username:</label>
                             </div>
                             <div class="col-8">
-                                <input type="text" class="form-control border border-dark">
+                                <input type="text" name="username" id="username" class="form-control border border-dark" required>
                             </div>
                         </div>
                         <div class="row align-items-center mb-3">
                             <div class="col-4 text-center">
-                                <label for="username" class="form-label me-2">Password:</label>
+                                <label for="password" class="form-label me-2">Password:</label>
                             </div>
                             <div class="col-8">
-                                <input type="password" class="form-control border border-dark">
+                                <input type="password" name="password" id="password" class="form-control border border-dark" required>
                             </div>
+                        </div>
+                        <div>
+                            <a href="register.php">Sign Up</a>
                         </div>
                         <div class="d-flex justify-content-center">
                             <button class="btn btn-warning w-50">Login</button>
@@ -54,11 +64,48 @@
     <script>
         $('#loginForm').submit(function(e) {
             e.preventDefault()
-            Swal.fire(
-                'RAWR',
-                'HALIKA',
-                'success'
-            )
+            const data = $(this).serializeArray()
+            $.ajax({
+                url: "./routes/auth/login.php",
+                method: "post",
+                data: data,
+                success: (res) => {
+                    console.log(res)
+                    if (res.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: res.message,
+                            allowOutsideClick: false,
+                            focusConfirm: true,
+                            allowEscapeKey: false,
+                            showConfirmButton: false
+                        })
+                        setTimeout(() => {
+                            // window.location.href = "./student/student.php"
+                            switch (res.role) {
+                                case 'student':
+                                    window.location.href = "./student/admin.php"
+                                    break;
+                                case 'professor':
+                                    window.location.href = "./professor/index.php"
+                                    break;
+                                case 'admin':
+                                    window.location.href = "./admin/index.php"
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }, 1200);
+                    } else {
+                        console.log(res)
+                        Swal.fire(
+                            'Failed',
+                            `${res.message}`,
+                            'error'
+                        )
+                    }
+                }
+            });
         })
     </script>
 </body>
