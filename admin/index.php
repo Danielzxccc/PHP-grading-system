@@ -18,21 +18,22 @@ $headertitle = 'RECORDS'
     <script src="../js/sweetalert.js"></script>
 </head>
 
-<body>
+<body class="container-background">
     <?php include_once('../includes/header.php') ?>
 
-    <main class="d-block d-md-flex full-height container-background">
+    <main class="d-block d-md-flex full-height">
         <!--  -->
-        <div class="col p-3">
+        <div class="p-3 w-100 w-md-50">
             <div class="d-flex justify-content-center align-items-center">
                 <input type="text" name="studentname" id="studentname" class="form-control border border-dark m-input mx-2 " readonly>
                 <button class="btn border border-dark" data-bs-toggle="modal" data-bs-target="#studentModal">SELECT</button>
             </div>
-            <div class="mt-5 mx-3">
+            <div class="mt-2 mx-3">
                 <h5 class="fw-bold ms-2">STUDENT FOR ADD SUBJECTS</h5>
-                <div class="bg-white">
+                <div class="bg-white flex-none">
                     <div class="container py-4">
                         <div class="row mb-3">
+                            <input type="hidden" id="studentid">
                             <div class="col-4 text-end fw-semibold">NAME:</div>
                             <div class="col-8 studentname"></div>
                         </div>
@@ -71,19 +72,85 @@ $headertitle = 'RECORDS'
                             <div class="col-4 text-end fw-semibold">DESCRIPTION:</div>
                             <div class="col-6 coursedescription border ms-2 py-2">...</div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-4 text-end fw-semibold">UNITS:</div>
+                            <div class="col-8 subjectunit"></div>
+                        </div>
                     </div>
                 </div>
                 <!-- add button -->
                 <div class="d-flex justify-content-end mx-4 mt-3">
                     <button class="btn btn-primary text-white" id="btnAddSubject">ADD SUBJECT</button>
                 </div>
+                <!-- subjects table -->
+                <div class="bg-white mt-2 student-subject-table">
+                    <table class="table text-center" align="center">
+                        <thead class="py-2 table-head">
+                            <th></th>
+                            <th class="py-2">NAME</th>
+                            <th class="py-2">COURSE</th>
+                            <th class="py-2">YEAR LEVEL</th>
+                            <th class="py-2">STUDENT #</th>
+                            <th class="py-2">COURSE CODE</th>
+                            <th class="py-2">DESCRIPTION</th>
+                            <th class="py-2">UNITS</th>
+                        </thead>
+                        <tbody id="studentSubjectList">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="my-2">
+                    <div class="d-flex justify-content-end">
+                        <button class="mx-1 btn btn-success btnUpdate">UPDATE</button>
+                        <button class="mx-1 btn btn-danger btnDelete">DELETE</button>
+                        <button class="mx-1 btn btn-info btnPrint">PRINT</button>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- PRINTABLES -->
-        <div class="col ">test</div>
+        <div class="w-100 w-md-50">
+            <div class="mt-2 mx-3">
+                <h5 class="fw-bold ms-2">LIST OF STUDENT'S GRADES</h5>
+                <div>
+                    <div class="overflow-auto table-grades bg-white">
+                        <table class="table text-center table-bordered">
+                            <thead>
+                                <th>NAME</th>
+                                <th>FIRST MONTHLY</th>
+                                <th>FIRST PRELIM</th>
+                                <th>SECOND PRELIM</th>
+                                <th>MIDTERM</th>
+                                <th>PRE FINAL</th>
+                                <th>FINAL</th>
+                                <th>AVERAGE</th>
+                                <th>REMARKS</th>
+                                <th>COURSE</th>
+                                <th>SECTION</th>
+                            </thead>
+                            <tbody>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                                <td>asdasdasdasd</td>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- MODALS HERE -->
+    <!-- SELECT STUDENT -->
     <div class="modal fade" id="studentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -112,6 +179,39 @@ $headertitle = 'RECORDS'
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="btnSelectStudent">OK</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE SUBJECT -->
+    <div class="modal fade" id="updateSubject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Update Subject</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="updateSubjectForm">
+                    <div class="modal-body">
+                        <select name="selectsubject" id="selectsubject" class="form-select w-75" required>
+                            <option value="">SELECT SUBJECT</option>
+                            <?php
+                            // query subjects course code
+                            $stmt = $con->prepare("SELECT * FROM subjects");
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            while ($row = $result->fetch_assoc()) :
+                            ?>
+                                <option value="<?php echo $row['id'] ?>"><?php echo $row['coursecode'] ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                        <div class="updatedescription my-2"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

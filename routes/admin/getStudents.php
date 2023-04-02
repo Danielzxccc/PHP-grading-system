@@ -3,8 +3,6 @@ session_start();
 
 require_once '../../config/db.php';
 
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function message($status, $message)
     {
@@ -72,6 +70,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $result->fetch_assoc();
 
         echo json_encode($row);
+        exit();
+    }
+
+    if (isset($_POST['getStudentSubjects'])) {
+        $stmt = $con->prepare("SELECT studentsubjects.id as id, 
+        studentsubjects.subjectid as studentsubject, 
+        students.lastname, students.firstname, students.middlename, 
+        students.course, students.studentid, subjects.coursecode, 
+        subjects.description, subjects.units
+        FROM studentsubjects
+        JOIN students ON students.id = studentsubjects.studentid
+        JOIN subjects ON subjects.id = studentsubjects.subjectid
+        WHERE students.id = ?");
+        $stmt->bind_param("i", $_POST['id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $output = '';
+        if (isset($_POST['getCourseCode'])) {
+            $output .= "<option value='0'>Select a subject</option>";
+            while ($row = $result->fetch_assoc()) :
+                $output .= "
+                    <option value='" .  $row['studentsubject'] . "' data-id='" . $row['id'] . "'>" . $row['coursecode'] . "</option>
+                ";
+            endwhile;
+        } else {
+            while ($row = $result->fetch_assoc()) :
+                $output .= "
+                    <tr>
+                        <td>
+                        <input type='radio' name='studentsubject' class='subjectList' value='" . $row['id'] . "' data-id='" . $row['studentsubject'] . "' />
+                        </td>
+                        <td>" . $row['lastname'] . ", " . $row['firstname'] . " " . $row['middlename'] . ".</td>
+                        <td>" . $row['course'] . "</td>
+                        <td>1st Year</td>
+                        <td>" . $row['studentid'] . "</td>
+                        <td>" . $row['coursecode'] . "</td>
+                        <td>" . $row['description'] . "</td>
+                        <td>" . $row['units'] . "</td>
+                    </tr>
+                ";
+            endwhile;
+        }
+        echo $output;
         exit();
     }
 }

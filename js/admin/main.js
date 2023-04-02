@@ -22,6 +22,7 @@ function getStudentInfo(id) {
     },
     success: function (data) {
       const json = JSON.parse(data)
+      $('#studentid').val(json.id)
       $('#studentname').val(
         json.lastname + ', ' + json.firstname + ' ' + json.middlename
       )
@@ -35,7 +36,7 @@ function getStudentInfo(id) {
   })
 }
 
-function getSubjectInfo(id) {
+function getSubjectInfo(id, type = 'add') {
   $.ajax({
     url: '../routes/admin/getStudents.php',
     method: 'post',
@@ -45,7 +46,131 @@ function getSubjectInfo(id) {
     },
     success: function (data) {
       const json = JSON.parse(data)
-      $('.coursedescription').text(json.description)
+      if (type === 'add') {
+        $('.coursedescription').text(json.description)
+        $('.subjectunit').text(json.units)
+      } else if (type === 'get') {
+        $('#selectsubject').val(json.id)
+        $('.updatedescription').text(json.description)
+      } else {
+        $('.updatedescription').text(json.description)
+      }
+    },
+  })
+}
+
+function getStudentSubjects(id) {
+  $.ajax({
+    url: '../routes/admin/getStudents.php',
+    method: 'post',
+    data: {
+      getStudentSubjects: null,
+      id: id,
+    },
+    success: function (data) {
+      if (data === '')
+        return $('#studentSubjectList').html('<td colspan="7">No Subjects</>')
+      $('#studentSubjectList').html(data)
+    },
+  })
+}
+
+// adding subject
+function addSubject(studentid, subjectid) {
+  $.ajax({
+    url: '../routes/admin/addStudentSubject.php',
+    method: 'post',
+    data: {
+      addStudentSubject: null,
+      studentid: studentid,
+      subjectid: subjectid,
+    },
+    success: function (data) {
+      if (data.success) {
+        return Swal.fire({
+          icon: 'success',
+          title: `${data.message}`,
+          allowOutsideClick: false,
+          focusConfirm: true,
+          allowEscapeKey: false,
+          timer: 1500,
+        })
+      }
+      Swal.fire({
+        icon: 'error',
+        title: `${data.message}`,
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+    },
+  })
+}
+
+function updateSubject(subject) {
+  const { id, studentid, subjectid } = subject
+
+  $.ajax({
+    url: '../routes/admin/studentSubjectsActions.php',
+    method: 'post',
+    data: {
+      updateStudentSubject: null,
+      id: id,
+      studentid: studentid,
+      subjectid: subjectid,
+    },
+    success: function (data) {
+      $('#updateSubject').modal('hide')
+      if (data.success) {
+        return Swal.fire({
+          icon: 'success',
+          title: `${data.message}`,
+          allowOutsideClick: false,
+          focusConfirm: true,
+          allowEscapeKey: false,
+          timer: 1500,
+        })
+      }
+      Swal.fire({
+        icon: 'error',
+        title: `${data.message}`,
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+    },
+  })
+}
+
+function deleteSubject(id) {
+  $.ajax({
+    url: '../routes/admin/studentSubjectsActions.php',
+    method: 'post',
+    data: {
+      deleteStudentSubject: null,
+      id: id,
+    },
+    success: function (data) {
+      if (data.success) {
+        return Swal.fire({
+          icon: 'success',
+          title: `${data.message}`,
+          allowOutsideClick: false,
+          focusConfirm: true,
+          allowEscapeKey: false,
+          timer: 1500,
+        })
+      }
+      Swal.fire({
+        icon: 'error',
+        title: `${data.message}`,
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
     },
   })
 }
@@ -76,6 +201,7 @@ $(document).ready(function () {
     const selectedStudent = $('.student-radio:checked').val()
     if (selectedStudent) {
       getStudentInfo(selectedStudent)
+      getStudentSubjects(selectedStudent)
     } else {
       Swal.fire({
         icon: 'error',
@@ -91,20 +217,100 @@ $(document).ready(function () {
   $('#searchStudent').on('input', function (e) {
     searchStudent(e.target.value)
   })
+
   //select subject
   $('#subject').on('change', function (e) {
-    console.log(e.target.value)
+    if (e.target.value === '') {
+      $('.coursedescription').text('')
+      $('.subjectunit').text('')
+    }
     getSubjectInfo(e.target.value)
   })
 
+  $('#selectsubject').on('change', function (e) {
+    if (e.target.value === '') {
+      $('.updatedescription').text('')
+    }
+    getSubjectInfo(e.target.value, 'update')
+  })
+
+  //adding subject
   $('#btnAddSubject').on('click', function () {
+    const studentid = $('#studentid').val()
+    const subjectid = $('#subject').val()
+
+    if (!studentid)
+      return Swal.fire({
+        icon: 'error',
+        title: 'Please select a student',
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+
+    if (!subjectid)
+      return Swal.fire({
+        icon: 'error',
+        title: 'Please select a subject',
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+
+    addSubject(studentid, subjectid)
+    getStudentSubjects(studentid)
+  })
+
+  // CRUD OPERATIONS
+  // UDPATE SUBJECT
+  $('.btnUpdate').on('click', function () {
+    const selectedSubject = $('.subjectList:checked').val()
+    const subjectUpdateID = $('.subjectList:checked').data('id')
+    getSubjectInfo(subjectUpdateID, 'get')
+    if (!selectedSubject) return
+    $('#updateSubject').modal('show')
+  })
+
+  $('#updateSubjectForm').on('submit', function (e) {
+    e.preventDefault()
+    const selectedSubject = $('.subjectList:checked').val()
+    const studentid = $('#studentid').val()
+    const subjectid = $('#selectsubject').val()
+
+    if (!subjectid)
+      return Swal.fire({
+        icon: 'error',
+        title: 'Please select a subject',
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+    updateSubject({
+      id: selectedSubject,
+      studentid: studentid,
+      subjectid: subjectid,
+    })
+    getStudentSubjects(studentid)
+  })
+
+  // delete events
+  $('.btnDelete').on('click', function () {
+    const selectedSubject = $('.subjectList:checked').val()
+    const studentid = $('#studentid').val()
+    if (!selectedSubject) return
     Swal.fire({
-      icon: 'success',
-      title: 'Added Successfully',
-      allowOutsideClick: false,
-      focusConfirm: true,
-      allowEscapeKey: false,
-      timer: 1500,
+      title: 'Are you sure you want to delete?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteSubject(selectedSubject)
+        getStudentSubjects(studentid)
+      }
     })
   })
 })

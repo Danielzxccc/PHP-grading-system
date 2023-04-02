@@ -52,7 +52,7 @@
                     </div>
                     <div class="mx-md-2">
                         <label for="middlename" class="form-label">Middle Name</label>
-                        <input type="text" class="form-control" name="middlename" id="middlename" required>
+                        <input type="text" class="form-control" name="middlename" id="middlename">
                     </div>
                     <div class="ms-md-2">
                         <label for="studentid" class="form-label">Student Number</label>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="ms-md-2">
                         <label for="number" class="form-label">Contact Number</label>
-                        <input type="text" class="form-control" name="number" id="number" required>
+                        <input type="text" class="form-control" name="number" id="number" pattern='^09\d{9}$' title='Enter a valid PH mobile number' required>
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@
                             <option value="Female">Female</option>
                         </select>
                     </div>
-                    <div class="ms-md-2">
+                    <div class="mx-md-2">
                         <label for="typeofscholarship" class="form-label">Type of Scholarship</label>
                         <select name="typeofscholarship" id="typeofscholarship" class="form-select">
                             <option value="TES-UNIFAST">TES-UNIFAST</option>
@@ -104,6 +104,15 @@
                             <option value="CAPIS SCHOLARSHIP">CAPIS SCHOLARSHIP</option>
                             <option value="ATHELETIC SCHOLARSHIP">ATHELETIC SCHOLARSHIP</option>
                             <option value="NONE">NONE</option>
+                        </select>
+                    </div>
+                    <div class="ms-md-2">
+                        <label for="yearlevel" class="form-label">Year Level</label>
+                        <select name="yearlevel" id="yearlevel" class="form-select">
+                            <option value="1">1st year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd year</option>
+                            <option value="4">4th Year</option>
                         </select>
                     </div>
                 </div>

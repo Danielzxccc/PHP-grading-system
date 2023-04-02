@@ -26,9 +26,18 @@
 .m-input {
   width: 250px;
 }
-@media (min-width: 768px) {
-  /* medium breakpoint */
-  .full-height {
-    height: 100vh;
-  }
+.student-subject-table {
+  height: 270px;
+  overflow-y: auto;
+}
+.table-head {
+  font-size: 12px;
+}
+.table-grades {
+  width: 720px;
+  font-size: small;
+}
+td,
+th {
+  vertical-align: middle;
 }

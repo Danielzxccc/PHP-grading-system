@@ -47,35 +47,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($rowUserCount > 0) {
         message(false, "Username is already taken.");
     } else {
-        //insert user
-        $stmt = $con->prepare('INSERT INTO `users` (`username`, `password`, `email`, `role`) VALUES (?, ?, ?, "student")');
-        $stmt->bind_param("sss", $username, $pass, $email);
-        $stmt->execute();
+        $userid;
+        try {
+            //insert user
+            $stmt = $con->prepare('INSERT INTO `users` (`username`, `password`, `email`, `role`) VALUES (?, ?, ?, "student")');
+            $stmt->bind_param("sss", $username, $pass, $email);
+            $stmt->execute();
 
-        $userid = $stmt->insert_id;
+            $userid = $stmt->insert_id;
+            // insert student values
+            $student = $con->prepare("INSERT INTO `students` 
+            (`userid`, `studentid`, `firstname`, `middlename`, `lastname`, `address`, 
+            `number`, `age`, `dateofbirth`, `sex`, `typeofscholarship`, `course`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $student->bind_param(
+                "issssssissss",
+                $userid,
+                $studentid,
+                $firstname,
+                $middlename,
+                $lastname,
+                $address,
+                $number,
+                $age,
+                $dateofbirth,
+                $sex,
+                $typeofscholarship,
+                $course
+            );
+            $student->execute();
 
-        // insert student values
-        $student = $con->prepare("INSERT INTO `students` 
-        (`userid`, `studentid`, `firstname`, `middlename`, `lastname`, `address`, 
-        `number`, `age`, `dateofbirth`, `sex`, `typeofscholarship`, `course`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $student->bind_param(
-            "issssssissss",
-            $userid,
-            $studentid,
-            $firstname,
-            $middlename,
-            $lastname,
-            $address,
-            $number,
-            $age,
-            $dateofbirth,
-            $sex,
-            $typeofscholarship,
-            $course
-        );
-        $student->execute();
-
-        message(true, "I Love you pareh");
+            if ($student->affected_rows > 0) {
+                message(true, 'Registered Successfully');
+            } else {
+                message(false, 'Something Went Wrong');
+            }
+        } catch (Exception $e) {
+            $stmt = $con->prepare('DELETE FROM `users` WHERE id = ?');
+            $stmt->bind_param("i", $userid);
+            $stmt->execute();
+            message(false, $e->getMessage());
+        }
     }
 }
