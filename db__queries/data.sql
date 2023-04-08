@@ -61,10 +61,13 @@ CREATE TABLE studentgrade(
     midterm INT NOT NULL,
     prefinal INT NOT NULL,
     final INT NOT NULL,
-    average INT NOT NULL,
-    grade INT NOT NULL,
+    schoolyear VARCHAR(255) NOT NULL,
+    semester INT NOT NULL,
+    section INT NOT NULL
+    status INT DEFAULT 0,
+    graderemark VARCHAR(255),
     CONSTRAINT fk_student_grade_subject FOREIGN KEY (studentsubjectid)
-    REFERENCES studentsubjects(id)
+    REFERENCES studentsubjects(id) ON DELETE CASCADE
 )
 
 SELECT studentgrade.*, studentsubjects.subjectid, subjects.coursecode
@@ -73,7 +76,8 @@ JOIN studentsubjects ON studentsubjects.id = studentgrade.studentsubjectid
 JOIN subjects ON studentsubjects.subjectid = subjects.id 
 WHERE studentsubjects.studentid = 8
 
-SELECT 
+SELECT
+  studentgrade.*, studentsubjects.subjectid, subjects.coursecode, students.firstname,
   ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) AS average,
   CASE
     WHEN graderemark != '' THEN graderemark
@@ -86,4 +90,32 @@ SELECT
     WHEN AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6) BETWEEN 75 AND 75 THEN '3.00 (PASSED)'
     ELSE '5.00 (FAILED)'
   END AS grades
-FROM studentgrade;
+FROM studentgrade
+JOIN studentsubjects ON studentsubjects.id = studentgrade.studentsubjectid
+JOIN subjects ON studentsubjects.subjectid = subjects.id
+JOIN students ON studentsubjects.studentid = students.id
+WHERE studentsubjects.studentid = 7
+GROUP by studentgrade.id
+;
+
+SELECT
+studentgrade.*, studentsubjects.subjectid, subjects.coursecode, subjects.description, 
+students.firstname, students.lastname, students.middlename, CONCAT(professor.lastname, ", ", professor.firstname) as profname,
+ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) AS average,
+CASE
+    WHEN graderemark != '' THEN graderemark
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 96.5 AND 100 THEN '1.00'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 92.5 AND 96.4 THEN '1.25'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 89.5 AND 92.4 THEN '1.50'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 85.5 AND 89.4 THEN '1.75'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 81.5 AND 85.4 THEN '2.00'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) BETWEEN 75.5 AND 81.4 THEN '2.50'
+    WHEN ROUND(AVG((monthly + firstprelim + secondpremlim + midterm + prefinal + final)/6), 2) >= 74.5 THEN '3.00 (PASSED)'
+    ELSE '5.00 (FAILED)'
+END AS grades
+FROM studentgrade
+JOIN studentsubjects ON studentsubjects.id = studentgrade.studentsubjectid
+JOIN subjects ON studentsubjects.subjectid = subjects.id
+JOIN students ON studentsubjects.studentid = students.id
+JOIN professor ON studentgrade.profid = professor.userid
+GROUP by studentgrade.id

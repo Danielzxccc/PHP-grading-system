@@ -12,6 +12,52 @@ function getAllStudents(search = '') {
   })
 }
 
+function getStudentGrades(id) {
+  $.ajax({
+    url: '../routes/admin/getAllStudentGrades.php',
+    method: 'post',
+    data: {
+      getStudentGrades: null,
+      id: id,
+    },
+    success: function (data) {
+      $('#getStudentGrades').html(data)
+    },
+  })
+}
+
+function releaseGrades(id) {
+  $.ajax({
+    url: '../routes/admin/studentSubjectsActions.php',
+    method: 'post',
+    data: {
+      releaseGrades: null,
+      id: id,
+    },
+    success: function (data) {
+      console.log(data)
+      if (data.success)
+        return Swal.fire({
+          icon: 'success',
+          title: `${data.message}`,
+          allowOutsideClick: false,
+          focusConfirm: true,
+          allowEscapeKey: false,
+          timer: 1500,
+        })
+
+      Swal.fire({
+        icon: 'error',
+        title: `${data.message}`,
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
+    },
+  })
+}
+
 function getStudentInfo(id) {
   $.ajax({
     url: '../routes/admin/getStudents.php',
@@ -202,6 +248,8 @@ $(document).ready(function () {
     if (selectedStudent) {
       getStudentInfo(selectedStudent)
       getStudentSubjects(selectedStudent)
+      getStudentGrades(selectedStudent)
+      $('#releaseGrades').removeClass('d-none')
     } else {
       Swal.fire({
         icon: 'error',
@@ -310,7 +358,35 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         deleteSubject(selectedSubject)
         getStudentSubjects(studentid)
+        getStudentGrades(studentid)
       }
+    })
+  })
+
+  // release grades
+  $('#releaseGrades').click(function () {
+    const studentid = $('#studentid').val()
+    Swal.fire({
+      title: 'Are you sure you want to release these grades?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        releaseGrades(studentid)
+        getStudentGrades(studentid)
+      }
+    })
+  })
+
+  // print functions
+  $('.btnPrint').click(function () {
+    $('#printGrade').printThis({
+      importCSS: true,
+      printDelay: 333,
+      afterPrint: function () {
+        window.close()
+      },
     })
   })
 })

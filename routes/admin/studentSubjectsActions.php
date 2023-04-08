@@ -54,4 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             message(false, 'Something Went Wrong');
         }
     }
+
+    if (isset($_POST['releaseGrades'])) {
+        $id =  $_POST['id'];
+        $stmt = $con->prepare("UPDATE studentgrade
+        JOIN studentsubjects ON studentsubjects.id = studentgrade.studentsubjectid
+        JOIN subjects ON studentsubjects.subjectid = subjects.id
+        JOIN students ON studentsubjects.studentid = students.id
+        SET studentgrade.status = 1
+        WHERE studentsubjects.studentid = ? AND studentgrade.id > 0");
+        $stmt->bind_param("i", $id);
+
+        try {
+            $stmt->execute();
+        } catch (Exception $e) {
+            message(false, $e->getMessage());
+        }
+
+        message(true, 'Released Successfully');
+    }
 }

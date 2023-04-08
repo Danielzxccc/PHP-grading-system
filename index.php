@@ -84,7 +84,7 @@
                             // window.location.href = "./student/student.php"
                             switch (res.role) {
                                 case 'student':
-                                    window.location.href = "./student/admin.php"
+                                    window.location.href = "./student/index.php"
                                     break;
                                 case 'professor':
                                     window.location.href = "./professor/index.php"

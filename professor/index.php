@@ -1,6 +1,11 @@
 <?php
+session_start();
 require_once '../config/db.php';
-$headertitle = 'GRADES'
+$headertitle = 'GRADES';
+
+if ($_SESSION['role'] !== "professor") {
+    header("Location: ../index.php");
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +45,7 @@ $headertitle = 'GRADES'
                                 <div class="col text-end">Section</div>
                                 <div class="col">
                                     <select name="section" id="section" class="form-select">
-                                        <option value="">0</option>
+                                        <option value="0">0</option>
                                     </select>
                                 </div>
                             </div>
@@ -55,8 +60,15 @@ $headertitle = 'GRADES'
                                     </select>
                                 </div>
                             </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="me-1">SCHOOL YEAR</div>
+                                <select name="schoolyear" id="schoolyear" class="form-select w-75">
+                                    <option value="2022-2023">2022-2023</option>
+                                    <option value="2024-2025">2024-2025</option>
+                                </select>
+                            </div>
                             <div class="row align-items-center py-2 mb-2">
-                                <div class="col text-end">COURSE</div>
+                                <div class="col text-end">COURSE CODE</div>
                                 <div class="col">
                                     <select name="studentsubjectid" id="studentsubjectid" class="form-select" required>
 
@@ -75,23 +87,19 @@ $headertitle = 'GRADES'
                             <div class="d-flex">
                                 <div class="flex-grow-1 px-2">
                                     <label for="monthly" class="form-label">FIRST MONTHLY</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="monthly" id="monthly" required>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="monthly" id="monthly" required step="0.01">
                                     <label for="firstprelim" class="form-label">FIRST PRELIM</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="firstprelim" id="firstprelim" required>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="firstprelim" id="firstprelim" required step="0.01">
                                     <label for="secondpremlim" class="form-label">SECOND PRELIM</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="secondpremlim" id="secondpremlim" required>
-                                    <label for="midterm" class="form-label">Second Prelim</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="midterm" id="seconmidtermdpremlim" required>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="secondpremlim" id="secondpremlim" required step="0.01">
                                 </div>
                                 <div class="flex-grow-1 px-2">
+                                    <label for="midterm" class="form-label">MIDTERM</label>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="midterm" id="midterm" required step="0.01">
                                     <label for="prefinal" class="form-label">PRE_FINAL</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="prefinal" id="prefinal" required>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="prefinal" id="prefinal" required step="0.01">
                                     <label for="final" class="form-label">FINAL</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="final" id="final" required>
-                                    <label for="average" class="form-label">AVERAGE</label>
-                                    <input type="number" class="form-control grades" min="50" max="100" name="average" id="average" required readonly>
-                                    <label for="grade" class="form-label">GRADE</label>
-                                    <input type="text" class="form-control grades" min="50" max="100" name="grade" id="grade" required readonly>
+                                    <input type="number" class="form-control grades" min="50" max="100" name="final" id="final" required step="0.01">
                                 </div>
                             </div>
                             <div class="px-2">
@@ -115,7 +123,20 @@ $headertitle = 'GRADES'
         </div>
         <!-- PRINTABLES -->
         <div class="w-100 w-md-50">
-            test
+            <div class="bg-white p-3 mt-3">
+                <table class="table table-bordered">
+                    <thead>
+                        <th>Name</th>
+                        <th>Subject</th>
+                        <th>Average</th>
+                        <th>Grade</th>
+                        <th></th>
+                    </thead>
+                    <tbody id="studentGrades">
+
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
@@ -148,6 +169,118 @@ $headertitle = 'GRADES'
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="btnSelectStudent">OK</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW MODAL -->
+    <div class="modal fade" id="viewGradeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h class="modal-title fs-5" id="viewGradeModalLabel">VIEW GRADE</h>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="studentName px-2">
+                        <h6 id="_studentViewGradeName"></h6>
+                        <h6 id="_studentViewSubject"></h6>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1 px-2">
+                            <label for="_monthly" class="form-label">FIRST MONTHLY</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_monthly" id="_monthly" readonly>
+                            <label for="_firstprelim" class="form-label">FIRST PRELIM</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_firstprelim" id="_firstprelim" readonly>
+                            <label for="_secondpremlim" class="form-label">SECOND PRELIM</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_secondpremlim" id="_secondpremlim" readonly>
+                            <label for="_average" class="form-label">AVERAGE</label>
+                            <input type="number" class="form-control" id="_average" readonly>
+                        </div>
+                        <div class="flex-grow-1 px-2">
+                            <label for="_midterm" class="form-label">MIDTERM</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_midterm" id="_midterm" readonly>
+                            <label for="_prefinal" class="form-label">PRE_FINAL</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_prefinal" id="_prefinal" readonly>
+                            <label for="_final" class="form-label">FINAL</label>
+                            <input type="number" class="form-control grades" min="50" max="100" name="_final" id="_final" readonly>
+                            <label for="_grade" class="form-label">GRADE</label>
+                            <input type="text" class="form-control" id="_grade" readonly>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <label for="_graderemark">REMARKS</label>
+                        <input type="text" name="_graderemark" id="_graderemark" class="form-control" readonly />
+                        <label for="__semester" class="form-label">SEMESTER</label>
+                        <input type="text" name="_semester" id="_semester" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editGradeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h class="modal-title fs-5" id="editGradeModalLabel">EDIT GRADE</h>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editStudentSubjectForm">
+                    <input type="hidden" name="id" id="__id" value="0">
+                    <input type="hidden" name="editStudentGrade" id="editStudentGrade" value="0">
+                    <div class="modal-body">
+                        <div class="studentName px-2">
+                            <h6 id="__studentViewGradeName"></h6>
+                            <h6 id="__studentViewSubject"></h6>
+                        </div>
+                        <div class="d-flex">
+                            <div class="flex-grow-1 px-2">
+                                <label for="__monthly" class="form-label">FIRST MONTHLY</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__monthly" id="__monthly" step="0.01" required>
+                                <label for="__firstprelim" class="form-label">FIRST PRELIM</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__firstprelim" id="__firstprelim" step="0.01" required>
+                                <label for="__secondpremlim" class="form-label">SECOND PRELIM</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__secondpremlim" id="__secondpremlim" step="0.01" required>
+                            </div>
+                            <div class="flex-grow-1 px-2">
+                                <label for="__midterm" class="form-label">MIDTERM</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__midterm" id="__midterm" step="0.01" required>
+                                <label for="__prefinal" class="form-label">PRE_FINAL</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__prefinal" id="__prefinal" step="0.01" required>
+                                <label for="__final" class="form-label">FINAL</label>
+                                <input type="number" class="form-control grades" min="50" max="100" name="__final" id="__final" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="px-2">
+                            <label for="__graderemark" class="form-label">REMARKS</label>
+                            <select name="__graderemark" id="__graderemark" class="form-select">
+                                <option value="">NONE</option>
+                                <option value="INC">INCOMPLETE</option>
+                                <option value="NC">NO CREDIT</option>
+                                <option value="UD">UNOFFICIALLY DROPPED</option>
+                                <option value="OD">OFFICIALLY DROPPED</option>
+                            </select>
+                            <label for="__semester" class="form-label">SEMESTER</label>
+                            <select name="__semester" id="__semester" class="form-select w-100">
+                                <option value="1">1st Sem</option>
+                                <option value="2">2nd Sem</option>
+                            </select>
+                            <label for="__section" class="form-label">SEMESTER</label>
+                            <select name="__section" id="__section" class="form-select w-100">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                        <button type="submit" class="btn btn-primary">SAVE</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

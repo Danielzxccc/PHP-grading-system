@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             while ($row = $result->fetch_assoc()) :
                 $output .= "
                     <tr>
-                        <td>
+                        <td class='d-print-none'>
                         <input type='radio' name='studentsubject' class='subjectList' value='" . $row['id'] . "' data-id='" . $row['studentsubject'] . "' />
                         </td>
                         <td>" . $row['lastname'] . ", " . $row['firstname'] . " " . $row['middlename'] . ".</td>

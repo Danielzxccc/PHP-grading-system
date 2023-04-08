@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role'] = $row['role'];
             message(true, "Successfully logged In", $row['role']);
         } else {
-            message(false, "Username or password is incorrect.");
+            message(false, "Username or password is incorrect.", null);
         }
     } else {
-        message(false, "Unknown user.");
+        message(false, "Unknown user.", null);
     }
 }

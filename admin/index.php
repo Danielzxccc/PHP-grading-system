@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once '../config/db.php';
-$headertitle = 'RECORDS'
+$headertitle = 'RECORDS';
+
+
+if ($_SESSION['role'] !== "admin") {
+    header("Location: ../index.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +22,7 @@ $headertitle = 'RECORDS'
     <script src="../js/admin/main.js" defer></script>
     <script src="../js/bootstrap.bundle.js" defer></script>
     <script src="../js/sweetalert.js"></script>
+    <script src="../js/printThis.js"></script>
 </head>
 
 <body class="container-background">
@@ -83,71 +90,65 @@ $headertitle = 'RECORDS'
                     <button class="btn btn-primary text-white" id="btnAddSubject">ADD SUBJECT</button>
                 </div>
                 <!-- subjects table -->
-                <div class="bg-white mt-2 student-subject-table">
-                    <table class="table text-center" align="center">
-                        <thead class="py-2 table-head">
-                            <th></th>
-                            <th class="py-2">NAME</th>
-                            <th class="py-2">COURSE</th>
-                            <th class="py-2">YEAR LEVEL</th>
-                            <th class="py-2">STUDENT #</th>
-                            <th class="py-2">COURSE CODE</th>
-                            <th class="py-2">DESCRIPTION</th>
-                            <th class="py-2">UNITS</th>
-                        </thead>
-                        <tbody id="studentSubjectList">
-                        </tbody>
-                    </table>
-                </div>
-                <div class="my-2">
-                    <div class="d-flex justify-content-end">
-                        <button class="mx-1 btn btn-success btnUpdate">UPDATE</button>
-                        <button class="mx-1 btn btn-danger btnDelete">DELETE</button>
-                        <button class="mx-1 btn btn-info btnPrint">PRINT</button>
-                    </div>
-                </div>
+
             </div>
         </div>
         <!-- PRINTABLES -->
-        <div class="w-100 w-md-50">
-            <div class="mt-2 mx-3">
-                <h5 class="fw-bold ms-2">LIST OF STUDENT'S GRADES</h5>
-                <div>
-                    <div class="overflow-auto table-grades bg-white">
-                        <table class="table text-center table-bordered">
-                            <thead>
-                                <th>NAME</th>
-                                <th>FIRST MONTHLY</th>
-                                <th>FIRST PRELIM</th>
-                                <th>SECOND PRELIM</th>
-                                <th>MIDTERM</th>
-                                <th>PRE FINAL</th>
-                                <th>FINAL</th>
-                                <th>AVERAGE</th>
-                                <th>REMARKS</th>
-                                <th>COURSE</th>
-                                <th>SECTION</th>
-                            </thead>
-                            <tbody>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                                <td>asdasdasdasd</td>
-                            </tbody>
-                        </table>
-                    </div>
-
+        <div class="w-100 w-md-50 mt-5" id="printGrade">
+            <div class="bg-white mt-2 student-subject-table mt-5">
+                <table class="table text-center" align="center">
+                    <thead class="py-2 table-head">
+                        <th class="d-print-none"></th>
+                        <th class="py-2">NAME</th>
+                        <th class="py-2">COURSE</th>
+                        <th class="py-2">YEAR LEVEL</th>
+                        <th class="py-2">STUDENT #</th>
+                        <th class="py-2">COURSE CODE</th>
+                        <th class="py-2">DESCRIPTION</th>
+                        <th class="py-2">UNITS</th>
+                    </thead>
+                    <tbody id="studentSubjectList">
+                    </tbody>
+                </table>
+            </div>
+            <div class="my-3">
+                <div class="d-flex justify-content-end">
+                    <button class="mx-1 btn btn-success btnUpdate d-print-none">UPDATE</button>
+                    <button class="mx-1 btn btn-danger btnDelete d-print-none">DELETE</button>
+                    <button class="mx-1 btn btn-info btnPrint d-print-none">PRINT</button>
                 </div>
             </div>
         </div>
     </main>
+    <div class="mx-3 my-4">
+        <h5 class="fw-bold ms-2">LIST OF STUDENT'S GRADES</h5>
+        <div>
+            <div class="overflow-auto bg-white">
+                <table class="table text-center table-bordered">
+                    <thead>
+                        <th>SUBJECT</th>
+                        <th>FIRST MONTHLY</th>
+                        <th>FIRST PRELIM</th>
+                        <th>SECOND PRELIM</th>
+                        <th>MIDTERM</th>
+                        <th>PRE FINAL</th>
+                        <th>FINAL</th>
+                        <th>AVERAGE</th>
+                        <th>REMARK</th>
+                        <th>STATUS</th>
+                        <th>COURSE</th>
+                        <th>SECTION</th>
+                    </thead>
+                    <tbody id="getStudentGrades">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="my-4">
+                <button class="btn btn-primary d-none" id="releaseGrades">Release Grades</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODALS HERE -->
     <!-- SELECT STUDENT -->
@@ -215,7 +216,6 @@ $headertitle = 'RECORDS'
             </div>
         </div>
     </div>
-
 </body>
 
 </html>

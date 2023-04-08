@@ -27,7 +27,7 @@
   width: 250px;
 }
 .student-subject-table {
-  height: 270px;
+  height: 318px;
   overflow-y: auto;
 }
 .table-head {
@@ -40,4 +40,10 @@
 td,
 th {
   vertical-align: middle;
+}
+
+@media print {
+  .student-subject-table {
+    height: 100%;
+  }
 }
