@@ -70,7 +70,6 @@
                 method: "post",
                 data: data,
                 success: (res) => {
-                    console.log(res)
                     if (res.success) {
                         Swal.fire({
                             icon: 'success',
@@ -97,7 +96,6 @@
                             }
                         }, 1200);
                     } else {
-                        console.log(res)
                         Swal.fire(
                             'Failed',
                             `${res.message}`,

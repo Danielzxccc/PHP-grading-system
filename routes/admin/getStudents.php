@@ -115,4 +115,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $output;
         exit();
     }
+
+    if (isset($_POST['getIncomingStudents'])) {
+        $stmt = $con->prepare("SELECT students.*, users.status FROM grading.students 
+        JOIN users ON users.id = students.userid
+        WHERE users.isApproved = 0 AND users.role = 'student'");
+        try {
+            $stmt->execute();
+        } catch (Exception $th) {
+            echo 'ERROR';
+            exit();
+        }
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) :
+?>
+            <tr>
+                <td><?php echo $row['studentid'] ?></td>
+                <td><?php echo $row['firstname'] ?></td>
+                <td><?php echo $row['middlename'] ?></td>
+                <td><?php echo $row['lastname'] ?></td>
+                <td><?php echo $row['address'] ?></td>
+                <td><?php echo $row['number'] ?></td>
+                <td><?php echo $row['age'] ?></td>
+                <td><?php echo $row['dateofbirth'] ?></td>
+                <td><?php echo $row['sex'] ?></td>
+                <td><?php echo $row['typeofscholarship'] ?></td>
+                <td><?php echo $row['course'] ?></td>
+                <td><?php echo $row['yearlevel'] ?></td>
+                <td>
+                    <button class="mx-1 btn btn-success accept-btn" data-id="<?php echo $row['userid'] ?>" data-name="<?php echo $row['lastname'] ?>">Accept</button>
+                </td>
+            </tr>
+<?php
+        endwhile;
+    }
 }

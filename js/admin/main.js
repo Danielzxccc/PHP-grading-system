@@ -12,6 +12,19 @@ function getAllStudents(search = '') {
   })
 }
 
+function getIncomingStudents() {
+  $.ajax({
+    url: '../routes/admin/getStudents.php',
+    method: 'post',
+    data: {
+      getIncomingStudents: null,
+    },
+    success: function (data) {
+      $('#incomingStudents').html(data)
+    },
+  })
+}
+
 function getStudentGrades(id) {
   $.ajax({
     url: '../routes/admin/getAllStudentGrades.php',
@@ -22,6 +35,36 @@ function getStudentGrades(id) {
     },
     success: function (data) {
       $('#getStudentGrades').html(data)
+    },
+  })
+}
+
+function acceptStudent(id) {
+  $.ajax({
+    url: '../routes/admin/studentSubjectsActions.php',
+    method: 'post',
+    data: {
+      acceptStudent: null,
+      id: id,
+    },
+    success: function (data) {
+      if (data.success)
+        return Swal.fire({
+          icon: 'success',
+          title: `${data.message}`,
+          allowOutsideClick: false,
+          focusConfirm: true,
+          allowEscapeKey: false,
+          timer: 1500,
+        })
+      Swal.fire({
+        icon: 'error',
+        title: `${data.message}`,
+        allowOutsideClick: false,
+        focusConfirm: true,
+        allowEscapeKey: false,
+        timer: 1500,
+      })
     },
   })
 }
@@ -375,6 +418,28 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         releaseGrades(studentid)
         getStudentGrades(studentid)
+      }
+    })
+  })
+
+  // accept students
+  $('#acceptStudentButton').click(function () {
+    $('#acceptStudents').modal('show')
+    getIncomingStudents()
+  })
+
+  $(document).on('click', '.accept-btn', function () {
+    const id = $(this).data('id')
+    const name = $(this).data('name')
+    Swal.fire({
+      title: `Are you sure you want to accept ${name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        acceptStudent(id)
+        getIncomingStudents()
       }
     })
   })

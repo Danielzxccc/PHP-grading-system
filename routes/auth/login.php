@@ -38,7 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rowUserCount = $result->num_rows;
     if ($rowUserCount == 1) {
         $row = $result->fetch_assoc();
-        if ($row['username'] === $username && $row['password'] === $password) {
+        if ($row['role'] == 'student' && $row['isApproved'] == 0) {
+            message(false, 'You need to be approved by the admin before you login.', null);
+        } else if ($row['username'] === $username && $row['password'] === $password) {
             $_SESSION['id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['role'] = $row['role'];

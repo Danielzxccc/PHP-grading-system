@@ -73,4 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         message(true, 'Released Successfully');
     }
+
+    if (isset($_POST['acceptStudent'])) {
+        $id =  $_POST['id'];
+        $stmt = $con->prepare("UPDATE users SET isApproved = 1 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        try {
+            $stmt->execute();
+        } catch (Exception $e) {
+            message(false, $e->getMessage());
+        }
+
+        message(true, 'Released Successfully');
+    }
 }

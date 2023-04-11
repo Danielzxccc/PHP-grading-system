@@ -95,7 +95,8 @@ if ($_SESSION['role'] !== "admin") {
         </div>
         <!-- PRINTABLES -->
         <div class="w-100 w-md-50 mt-5" id="printGrade">
-            <div class="bg-white mt-2 student-subject-table mt-5">
+            <button href="#" class="btn btn-success ms-2" id="acceptStudentButton">Accept Incoming Students</button>
+            <div class="bg-white mt-2 student-subject-table mt-2">
                 <table class="table text-center" align="center">
                     <thead class="py-2 table-head">
                         <th class="d-print-none"></th>
@@ -216,6 +217,45 @@ if ($_SESSION['role'] !== "admin") {
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="acceptStudents" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Accepts Students</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <table class="table table-striped table-bordered">
+                            <thead class="bg-dark text-white">
+                                <th>Student ID</th>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Last Name</th>
+                                <th>Address</th>
+                                <th>Contact #</th>
+                                <th>Age</th>
+                                <th>Birthdate</th>
+                                <th>Sex</th>
+                                <th>Type of Scholarship</th>
+                                <th>Course</th>
+                                <th>Year Level</th>
+                                <th>Actions</th>
+                            </thead>
+                            <tbody id="incomingStudents">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
