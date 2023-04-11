@@ -16,15 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //fetch student based on parameters
     if (isset($_POST['getAllStudents'])) {
         $searchParam = "%" . $_POST['search'] . "%";
-        $stmt = $con->prepare("SELECT * 
+        $stmt = $con->prepare("SELECT students.* 
         FROM students 
-            WHERE lastname LIKE ? 
-            OR firstname LIKE ?
-            OR middlename LIKE ?
-            OR id LIKE ?
-            OR studentid LIKE ?
-            OR course LIKE ?
-        LIMIT 10");
+        JOIN users ON students.userid = users.id
+            WHERE 
+            students.lastname LIKE ? AND users.isApproved = 1 
+            OR  students.firstname LIKE ? AND users.isApproved = 1 
+            OR  students.middlename LIKE ? AND users.isApproved = 1 
+            OR  students.id LIKE ? AND users.isApproved = 1 
+            OR  students.studentid LIKE ? AND users.isApproved = 1 
+            OR  students.course LIKE ? AND users.isApproved = 1 
+        LIMIT 100");
         $stmt->bind_param(
             "sssiss",
             $searchParam,

@@ -198,6 +198,23 @@ function resetGradeForm() {
   $('#graderemark').val('')
 }
 
+//add delay to search
+function debounce(cb, delay = 500) {
+  let timeout
+
+  return (...args) => {
+    if (timeout) clearTimeout(timeout)
+
+    timeout = setTimeout(() => {
+      cb(...args)
+    }, delay)
+  }
+}
+
+const searchStudent = debounce((searchTerm) => {
+  getAllStudents(searchTerm)
+})
+
 $(document).ready(function () {
   getAllStudents()
 
@@ -221,6 +238,11 @@ $(document).ready(function () {
   })
   $('#studentsubjectid').change(function (e) {
     getSubjectInfo(e.target.value)
+  })
+
+  //search student
+  $('#searchStudent').on('input', function (e) {
+    searchStudent(e.target.value)
   })
 
   $('#gradeForm').submit(function (e) {
@@ -256,7 +278,6 @@ $(document).ready(function () {
         graderemark: $('#graderemark').val(),
       },
       success: function (res) {
-        console.log(res)
         if (res.success) {
           getStudentGrades(selectedStudent)
           resetGradeForm()
