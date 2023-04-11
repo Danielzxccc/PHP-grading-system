@@ -45,7 +45,9 @@ if ($_SESSION['role'] !== "professor") {
                                 <div class="col text-end">Section</div>
                                 <div class="col">
                                     <select name="section" id="section" class="form-select">
-                                        <option value="0">0</option>
+                                        <?php for ($i = 65; $i <= 71; $i++) : ?>
+                                            <option value="<?php echo chr($i); ?>"><?php echo chr($i); ?></option>
+                                        <?php endfor; ?>
                                     </select>
                                 </div>
                             </div>

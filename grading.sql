@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 10, 2023 at 03:48 PM
+-- Generation Time: Apr 11, 2023 at 04:30 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.1.12
 
@@ -109,7 +109,8 @@ INSERT INTO `students` (`id`, `userid`, `studentid`, `firstname`, `middlename`, 
 (7, 8, '20220016', 'RAFAEL', 'PEKE', 'REBADULLA', 'San Francisco Cavite Caloocan', '0992334567', 25, '2023-03-19', 'Male', 'CAPIS SCHOLARSHIP', 'Information Technology', 1),
 (8, 9, '20220206', 'KATRINA JANE', 'PEYN', 'BAJEN', 'San Francisco, New York, Cavite City', '0992334567', 18, '2023-03-22', 'Female', 'CAPIS SCHOLARSHIP', 'Information Technology', 1),
 (9, 11, '20220070', 'Miles', 'Dwayne', 'Bridges', 'San Francisco Cavite Caloocan', '09094737765', 21, '2002-01-02', 'Male', 'CAPIS SCHOLARSHIP', 'BACHELOR OF ARTS IN POLITICAL SCIENCE', 1),
-(10, 12, '202210215', 'ALLAN', 'C', 'GUINTO', 'San Francisco Cavite Caloocan', '09094737765', 21, '2001-04-10', 'Male', 'MAHARLIKA SCHOLARSHIP', 'BACHELOR OF ARTS IN POLITICAL SCIENCE', 1);
+(10, 12, '202210215', 'ALLAN', 'C', 'GUINTO', 'San Francisco Cavite Caloocan', '09094737765', 21, '2001-04-10', 'Male', 'MAHARLIKA SCHOLARSHIP', 'BACHELOR OF ARTS IN POLITICAL SCIENCE', 1),
+(11, 13, '00898293', 'JABBAR', 'LEBRON', 'ABDUL', 'San Francisco, New York, Cavite City', '09094737765', 20, '2002-04-26', 'Female', 'NONE', 'BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT', 1);
 
 -- --------------------------------------------------------
 
@@ -204,12 +205,13 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `status`, `role`, `isApproved`) VALUES
 (1, 'prof1', '200820e3227815ed1756a6b531e7e0d2', 'daniel@email.com', '1', 'professor', 1),
-(2, 'stud1', '200820e3227815ed1756a6b531e7e0d2', 'stephcurry@email.com', '1', 'student', 0),
+(2, 'stud1', '200820e3227815ed1756a6b531e7e0d2', 'stephcurry@email.com', '1', 'student', 1),
 (8, 'stud2', '200820e3227815ed1756a6b531e7e0d2', 'draymond@gmail.com', '1', 'student', 0),
 (9, 'stud3', '200820e3227815ed1756a6b531e7e0d2', 'kevindurant@email.com', '1', 'student', 0),
 (10, 'admin1', '200820e3227815ed1756a6b531e7e0d2', 'emailnilebron@gmail.com', '1', 'admin', 1),
-(11, 'stud4', '200820e3227815ed1756a6b531e7e0d2', 'test34@gmail.com', '1', 'student', 0),
-(12, 'stud5', '200820e3227815ed1756a6b531e7e0d2', 'test345@gmail.com', '1', 'student', 0);
+(11, 'stud4', '200820e3227815ed1756a6b531e7e0d2', 'test34@gmail.com', '1', 'student', 1),
+(12, 'stud5', '200820e3227815ed1756a6b531e7e0d2', 'test345@gmail.com', '1', 'student', 1),
+(13, 'stud6', '200820e3227815ed1756a6b531e7e0d2', 'test34@gmail.com', '1', 'student', 0);
 
 --
 -- Indexes for dumped tables
@@ -278,7 +280,7 @@ ALTER TABLE `studentgrade`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `studentsubjects`
@@ -296,7 +298,7 @@ ALTER TABLE `subjects`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables

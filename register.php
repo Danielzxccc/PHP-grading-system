@@ -63,7 +63,16 @@
                 <div class="d-flex justify-content-center mt-3 flex-md-row flex-column px-2 mb-3">
                     <div class="me-md-2">
                         <label for="course" class="form-label">Course</label>
-                        <input type="text" class="form-control" name="course" id="course" required>
+                        <select name="course" id="course" class="form-select">
+                            <option value="BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT">BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT</option>
+                            <option value="BACHELOR OF ARTS IN POLITICAL SCIENCE">BACHELOR OF ARTS IN POLITICAL SCIENCE</option>
+                            <option value="BACHELOR OF ELEMENTARY EDUCATION">BACHELOR OF ELEMENTARY EDUCATION</option>
+                            <option value="BACHELOR OF SECONDARY EDUCATION MAJOR IN ENGLISH">BACHELOR OF SECONDARY EDUCATION MAJOR IN ENGLISH</option>
+                            <option value="BACHELOR OF SECONDARY EDUCATION MAJOR IN MATH">BACHELOR OF SECONDARY EDUCATION MAJOR IN MATH</option>
+                            <option value="BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION">BACHELOR OF SCIENCE IN BUSINESS ADMINISTRATION</option>
+                            <option value="BACHELOR OF SCIENCE IN COMPUTER SCIENCE">BACHELOR OF SCIENCE IN COMPUTER SCIENCE</option>
+                            <option value="BACHELOR OF SCIENCE IN TOURISM MANAGEMENT">BACHELOR OF SCIENCE IN TOURISM MANAGEMENT</option>
+                        </select>
                     </div>
                     <div class="mx-md-2">
                         <label for="email" class="form-label">Email</label>
